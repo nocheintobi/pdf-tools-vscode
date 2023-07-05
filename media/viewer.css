@@ -1,0 +1,22 @@
+
+.previewPanel-1 {
+    min-width:50%;
+    height: 60%;
+    border: 1px solid black;
+    margin: 0;
+    padding: 0;
+}
+
+.previewPanel-2 {
+    width: 48%;
+    border: 1px solid black;
+    margin: 0;
+    padding: 0;
+}
+
+.previewPanel-3 {
+    width: 32%;
+    border: 1px solid black;
+    margin: 0;
+    padding: 0;
+}

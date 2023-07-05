@@ -1,0 +1,103 @@
+{
+  "name": "pdf-tools",
+  "displayName": "pdf-tools",
+  "description": "Tools for handling PDF files within VSCode",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.78.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [ { "id": "pdf-tools", "title": "PDF TOOLS", "icon": "media/pdf.svg" } ]
+    },
+    "views": {
+      "pdf-tools": [ { "id": "pdf-tools", "name": "PDF Tools", "icon": "media/pdf.svg" } ]
+    },
+    "commands": [
+      {"command": "pdf-tools.preview", "title": "Preview"},
+      {"command": "pdf-tools.rename", "title": "Rename"},
+      {"command": "pdf-tools.remove", "title": "Remove"},
+      {"command": "pdf-tools.extract", "title": "Extract"},
+      {"command": "pdf-tools.rotate", "title": "Rotate"},
+      {"command": "pdf-tools.splitHorizontal", "title": "Split: |"},
+      {"command": "pdf-tools.splitVertical", "title": "Split: -"},
+      {"command": "pdf-tools.combineHorizontal", "title": "Combine |"},
+      {"command": "pdf-tools.combineVertical", "title": "Combine -"},
+      {"command": "pdf-tools.clear", "title": "Clear"},
+      {"command": "pdf-tools.splitPages", "title": "Split pages", "icon": "media/dep.svg"},
+      {"command": "pdf-tools.sort", "title": "Sort"},
+      {"command": "pdf-tools.renameSelected", "title": "Rename selected"}
+    ],
+    "menus": {
+      "view/item/context": [
+        {"command": "pdf-tools.preview", "group": "navigation@1", "when": "viewItem == pdfPage && (listMultiSelection || true)" },
+        {"command": "pdf-tools.rename", "group": "navigation@2", "when": "viewItem == pdfPage && (listMultiSelection || true)" },
+        {"command": "pdf-tools.remove", "group": "navigation@3", "when": "viewItem == pdfPage && (listMultiSelection || true)" },
+        {"command": "pdf-tools.sort", "group": "navigation@4", "when": "viewItem == pdfPage" },
+
+        {"command": "pdf-tools.extract", "group": "z_commands", "when": "viewItem == pdfPage && (listMultiSelection || true)" },
+
+        {"command": "pdf-tools.rotate", "group": "1_modification@1", "when": "viewItem == pdfPage && (listMultiSelection || true)" },
+        {"command": "pdf-tools.splitVertical", "group": "1_modification@10", "when": "viewItem == pdfPage && (listMultiSelection || true)" },
+        {"command": "pdf-tools.splitHorizontal", "group": "1_modification@11", "when": "viewItem == pdfPage && (listMultiSelection || true)" },
+        {"command": "pdf-tools.combineVertical", "group": "1_modification@12", "when": "viewItem == pdfPage && listDoubleSelection" },
+        {"command": "pdf-tools.combineHorizontal", "group": "1_modification@13", "when": "viewItem == pdfPage && listDoubleSelection" },
+
+        {"command": "pdf-tools.clear", "group": "7_modification", "when": "viewItem == pdfPage && (listMultiSelection || true)" }
+      ],
+      "view/title": [
+        {"command": "pdf-tools.splitPages", "when": "view == pdf-tools"}
+      ]
+    },
+    "configuration": {
+      "title": "PDF Tools",
+      "properties": {
+        "pdf-tools.outputDir": {
+          "type": "string",
+          "default": "",
+          "description": "Output directory for generated PDFs"
+        }
+      }
+    },
+    "keybindings": [
+      {"key": "ctrl+alt+cmd+k", "command": "pdf-tools.splitHorizontal"},
+      {"key": "ctrl+alt+cmd+l", "command": "pdf-tools.splitVertical"},
+      {"key": "ctrl+alt+cmd+x", "command": "pdf-tools.remove"},
+      {"key": "ctrl+alt+cmd+s", "command": "pdf-tools.extract"},
+      {"key": "ctrl+alt+cmd+r", "command": "pdf-tools.rotate"},
+      {"key": "ctrl+alt+cmd+p", "command": "pdf-tools.splitPages"},
+      {"key": "ctrl+alt+cmd+c", "command": "pdf-tools.clear"},
+      {"key": "ctrl+alt+cmd+f2", "command": "pdf-tools.renameSelected"}
+    ]
+  },
+  "scripts": {
+    "package": "vsce package",
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.78.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
+    "@vscode/test-electron": "^2.3.0",
+    "eslint": "^8.39.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1"
+  }
+}
