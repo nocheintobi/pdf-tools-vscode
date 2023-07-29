@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { PDFDocument, PDFPage } from 'pdf-lib'
+import { PDFDocument, PDFPage, rgb } from 'pdf-lib'
 import { promises as fs } from 'node:fs'
 import * as path from 'node:path'
 import * as url from 'node:url';
@@ -165,6 +165,18 @@ export class PageTreeProvider implements vscode.TreeDataProvider<PageItem>, vsco
         this.refreshTree(this.data.filter(item => !items.includes(item)));
     }
 
+    public crop(items: PageItem[], config: any) {
+        for(const item of items) {
+            const pageSize = item.data?.pdfPage.getSize();
+            
+            const x = config.selection.x1 * pageSize!.width/config.pageWidth,
+                  y = (config.selection.y1 * pageSize!.height/config.pageHeight);
+            const width = (config.selection.x2 * (pageSize!.width/config.pageWidth)) - x,
+                  height = ((config.selection.y2 * pageSize!.height/config.pageHeight) - y);
+            item.data?.pdfPage.setCropBox(x,pageSize!.height-y,width,height*-1)
+        }
+    }
+
     /** Split a single page into two (e.g. A3=>2xA4, A4=2xA5) */
     public async split(direction: "h" | "v", pageItems: PageItem[]): Promise<PageItem[]> {
         const newItems: PageItem[] = [];
@@ -235,7 +247,7 @@ export class PageTreeProvider implements vscode.TreeDataProvider<PageItem>, vsco
     }
 
     /** Create a PDFDocument from the given PageItems */
-    public async pdfFrom(items: PageItem[], reload: boolean = true): Promise<PDFDocument> {
+    public async pdfFrom(items: PageItem[], reload: boolean = true, showGrid = false): Promise<PDFDocument> {
         const result = await PDFDocument.create();
         result.setAuthor('');
         result.setProducer('')
@@ -245,6 +257,26 @@ export class PageTreeProvider implements vscode.TreeDataProvider<PageItem>, vsco
             const pages = await result.copyPages(this.pdfContainer, indices);
             for(const page of pages) {
                 result.addPage(page);
+                if( showGrid ) {
+                    for(let x = 0; x < page.getWidth(); x += 10) {   
+                        page.drawLine({
+                            start: {x, y: 0},
+                            end: {x, y: page.getHeight()},
+                            thickness: 1,
+                            color: rgb(0.5, 0.5, 0.5),
+                            opacity: 0.5
+                        });
+                    }
+                    for( let y = 0; y < page.getHeight(); y += 10) {
+                        page.drawLine({
+                            start: {x: 0, y},
+                            end: {x: page.getWidth(), y},
+                            thickness: 1,
+                            color: rgb(0.5, 0.5, 0.5),
+                            opacity: 0.5
+                        });
+                    }
+                }
             }
         }
         if( reload ){
@@ -257,5 +289,4 @@ export class PageTreeProvider implements vscode.TreeDataProvider<PageItem>, vsco
         this.data.sort((a,b) => a.label === b.label ? 0 : (a.label || "") < (b.label || "") ? (ascending ? 1 : -1) : (ascending ? -1 : 1));
         this.refreshTree();
     } 
-
 }

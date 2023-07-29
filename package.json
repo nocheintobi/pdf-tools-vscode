@@ -31,7 +31,8 @@
       {"command": "pdf-tools.clear", "title": "Clear"},
       {"command": "pdf-tools.splitPages", "title": "Split pages", "icon": "media/dep.svg"},
       {"command": "pdf-tools.sort", "title": "Sort"},
-      {"command": "pdf-tools.renameSelected", "title": "Rename selected"}
+      {"command": "pdf-tools.renameSelected", "title": "Rename selected"},
+      {"command": "pdf-tools.toggleGrid", "title": "Toggle grid"}
     ],
     "menus": {
       "view/item/context": [
@@ -47,6 +48,7 @@
         {"command": "pdf-tools.splitHorizontal", "group": "1_modification@11", "when": "viewItem == pdfPage && (listMultiSelection || true)" },
         {"command": "pdf-tools.combineVertical", "group": "1_modification@12", "when": "viewItem == pdfPage && listDoubleSelection" },
         {"command": "pdf-tools.combineHorizontal", "group": "1_modification@13", "when": "viewItem == pdfPage && listDoubleSelection" },
+        {"command": "pdf-tools.toggleGrid", "group": "1_modification@14", "when": "viewItem == pdfPage && listDoubleSelection" },
 
         {"command": "pdf-tools.clear", "group": "7_modification", "when": "viewItem == pdfPage && (listMultiSelection || true)" }
       ],
@@ -72,7 +74,8 @@
       {"key": "ctrl+alt+cmd+r", "command": "pdf-tools.rotate"},
       {"key": "ctrl+alt+cmd+p", "command": "pdf-tools.splitPages"},
       {"key": "ctrl+alt+cmd+c", "command": "pdf-tools.clear"},
-      {"key": "ctrl+alt+cmd+f2", "command": "pdf-tools.renameSelected"}
+      {"key": "ctrl+alt+cmd+f2", "command": "pdf-tools.renameSelected"},
+      {"key": "ctrl+alt+cmd+g", "command": "pdf-tools.toggleGrid"}
     ]
   },
   "scripts": {

@@ -1,7 +1,7 @@
 
 .previewPanel-1 {
     min-width:50%;
-    height: 60%;
+    height: 60%;    
     border: 1px solid black;
     margin: 0;
     padding: 0;
@@ -19,4 +19,18 @@
     border: 1px solid black;
     margin: 0;
     padding: 0;
+}
+
+.mainViewer {
+    height: 80%;    
+    border: 1px solid black;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    z-index: 0;
+}
+.glassPane {
+    height: 80%;
+    z-index: 1;
+    background: rgba(0,255,255,0.0);
 }
