@@ -177,6 +177,29 @@ export class PageTreeProvider implements vscode.TreeDataProvider<PageItem>, vsco
         }
     }
 
+    public clearArea(items: PageItem[], config: any) {
+        for(const item of items) {
+            const pageSize = item.data?.pdfPage.getSize();
+            
+            const x = config.selection.x1 * pageSize!.width/config.pageWidth,
+                  y = (config.selection.y1 * pageSize!.height/config.pageHeight);
+            const width = (config.selection.x2 * (pageSize!.width/config.pageWidth)) - x,
+                  height = ((config.selection.y2 * pageSize!.height/config.pageHeight) - y);
+            item.data?.pdfPage.drawRectangle({x,y: pageSize!.height-y,width,height: height*-1, color: rgb(1,1,1)});
+        }
+    }
+
+    public addText(items: PageItem[], config: any, text: string) {
+        for(const item of items) {
+            const pageSize = item.data?.pdfPage.getSize();
+            const x = config.selection.x1 * pageSize!.width/config.pageWidth,
+                  y = (config.selection.y1 * pageSize!.height/config.pageHeight);
+            const width = (config.selection.x2 * (pageSize!.width/config.pageWidth)) - x,
+                  height = ((config.selection.y2 * pageSize!.height/config.pageHeight) - y);
+            item.data?.pdfPage.drawText(text, { x: x, y: pageSize!.height-y-height });
+        }
+    }
+
     /** Split a single page into two (e.g. A3=>2xA4, A4=2xA5) */
     public async split(direction: "h" | "v", pageItems: PageItem[]): Promise<PageItem[]> {
         const newItems: PageItem[] = [];

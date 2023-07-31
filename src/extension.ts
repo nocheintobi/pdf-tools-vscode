@@ -129,14 +129,14 @@ function _getAllItems(): PageItem[] {
 
 /** Opens or refreshes the preview for the given items */
 async function showPreview(treeProvider: PageTreeProvider, items: any[]) {
-	const webview = getWebview(CONTEXT.extensionUri);
+	const webview = await getWebview(CONTEXT.extensionUri);
 	const pdfData = await Promise.all(items.map(async(item: any) => await (await treeProvider.pdfFrom([item], false, CONTEXT.showGrid)).saveAsBase64()));
 	webview.html = createHtml(webview, CONTEXT.extensionUri, pdfData);
 	await treeProvider.refreshModel();
 	treeProvider.refreshTree();
 }
 
-function getWebview(extensionUri: vscode.Uri) {
+async function getWebview(extensionUri: vscode.Uri) {
 	if( CONTEXT.panel ) {
 		try { CONTEXT.panel.webview } catch(error) { CONTEXT.panel = null}
 	}
@@ -144,18 +144,24 @@ function getWebview(extensionUri: vscode.Uri) {
 		CONTEXT.panel = vscode.window.createWebviewPanel('pdf-tools.preview', 'PDF Preview', vscode.ViewColumn.One, 
 			{enableScripts: true, localResourceRoots: [vscode.Uri.joinPath(extensionUri, 'media')]});
 		CONTEXT.context.subscriptions.push(
-			CONTEXT.panel.webview.onDidReceiveMessage((message : any) => {
-			vscode.window.showQuickPick(["active", "all", "none"], {title: "Crop page?", }).then(selection => {
-				switch(selection) {
-					case "active": 
-						CONTEXT.pageTreeProvider.crop(_getSelected(), JSON.parse(message.text)); 
-						break;
-					case "all": CONTEXT.pageTreeProvider.crop(_getAllItems(), JSON.parse(message.text)); 
-						break;
-					default: null;
-				}
-				showPreview(CONTEXT.pageTreeProvider, _getSelected());
-			});
+			CONTEXT.panel.webview.onDidReceiveMessage(async (message : any) => {
+			const selection = await vscode.window.showQuickPick(["crop", "cropAll", "text", "clear", "none"], {title: "What's next?", });
+			switch(selection) {
+				case "crop": 
+					CONTEXT.pageTreeProvider.crop(_getSelected(), JSON.parse(message.text)); 
+					break;
+				case "cropAll": CONTEXT.pageTreeProvider.crop(_getAllItems(), JSON.parse(message.text)); 
+					break;
+				case "text": 
+					const text = await vscode.window.showInputBox({title: "Text"});
+					CONTEXT.pageTreeProvider.addText(_getAllItems(), JSON.parse(message.text), text);
+					break;
+				case "clear":
+					CONTEXT.pageTreeProvider.clearArea(_getSelected(), JSON.parse(message.text));
+					break;
+				default: null;
+			}
+			showPreview(CONTEXT.pageTreeProvider, _getSelected());
 		}, undefined, CONTEXT.context.subscriptions )
 		);
 	}
