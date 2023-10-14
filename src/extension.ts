@@ -180,7 +180,7 @@ function createHtml(webview: vscode.Webview, extensionUri: vscode.Uri, pdfData: 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="${styleUri}" rel="stylesheet">
 	<title>PDF Preview</title>
-	<script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 	</head>
 	<body>
 	<div id="previewContainer"></div>
